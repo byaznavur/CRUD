@@ -1,1 +1,1 @@
-const level = ["Junior", "Middle", "Senior", "Team Lead"];
+const levels = ["Junior", "Middle", "Senior", "Team Lead"];

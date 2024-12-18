@@ -17,21 +17,22 @@
     <title>CRUD</title>
   </head>
   <body>
-    <header>
-      <nav class="input-group container mb-3">
+    <header class="mt-5">
+      <nav class="d-flex input-group container mb-3">
+        <h2 class="me-5">CRUD APP</h2>
         <input
           type="text"
-          class="form-control"
+          class="form-control worker-search-input"
           placeholder="Recipient's username"
           aria-label="Recipient's username"
           aria-describedby="button-addon2"
         />
         <span class="input-group-text">
-          <select class="form-select" id="level-filter"></select>
+          <select class="form-select" id="levels-filter"></select>
         </span>
         <button
           type="button"
-          class="btn btn-primary"
+          class="btn btn-primary modal-open-btn"
           data-bs-toggle="modal"
           data-bs-target="#crud-modal"
         >
@@ -152,7 +153,7 @@
                 >
                   <i class="bx bx-x-circle"></i>
                 </button>
-                <button type="submit" class="btn btn-primary">
+                <button type="submit" class="btn modal-submit-btn btn-primary">
                   <i class="bx bx-plus-circle"></i>
                 </button>
               </div>
@@ -163,8 +164,6 @@
     </header>
     <main>
       <section class="container">
-        <h2>CRUD</h2>
-
         <table class="table table-hover workers-table table-striped">
           <thead>
             <tr>

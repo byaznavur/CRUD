@@ -1,15 +1,24 @@
-const filterSelect = document.querySelector("#level-filter");
+const filterSelect = document.querySelector("#levels-filter");
 const filterLevel = document.querySelector("#level");
 const workersForm = document.querySelector(".workers-form");
 const workersModal = document.querySelector(".workers-modal");
 const workersTableBody = document.querySelector(".workers-table tbody");
+const openModalBtn = document.querySelector(".modal-open-btn");
+
+const modalSubmitBtn = document.querySelector(".modal-submit-btn");
+
+const workerSearchInput = document.querySelector(".worker-search-input");
 let workers = JSON.parse(localStorage.getItem("workers")) || [];
 console.log(workers);
+
+let selected = null;
+let search = "";
+let level = "All";
 
 filterSelect.innerHTML = `<option>
 All
 </option>`;
-level.map((el) => {
+levels.map((el) => {
   filterSelect.innerHTML += `<option>
      ${el}
     </option>`;
@@ -43,18 +52,12 @@ workersForm.addEventListener("submit", function (e) {
       isMarried: isMarried.checked,
     };
 
-    workers.push(worker);
+    if (selected === null) {
+      workers.push(worker);
+    } else {
+      workers[selected] = worker;
+    }
     this.classList.remove("was-validated");
-
-    firstName.value = "";
-    lastName.value = "";
-    address.value = "";
-    birthday.value = "";
-    position.value = "";
-    level.value = level[0];
-    salary.value = "";
-    isMarried.checked = false;
-
     localStorage.setItem("workers", JSON.stringify(workers));
     bootstrap.Modal.getInstance(workersModal).hide();
     getWorkers();
@@ -99,11 +102,25 @@ function getWorkerRow(
 }
 
 function getWorkers() {
+  let results = workers.filter(
+    (el) =>
+      el.firstName.toLowerCase().includes(search) ||
+      el.lastName.toLowerCase().includes(search)
+  );
+
+  if (level !== "All") {
+    results = results.filter((el) => el.level === level);
+  }
   workersTableBody.innerHTML = "";
 
-  workers.map((el, i) => {
-    workersTableBody.innerHTML += getWorkerRow(el, i);
-  });
+  if (results.length !== 0) {
+    results.map((el, i) => {
+      workersTableBody.innerHTML += getWorkerRow(el, i);
+    });
+  } else {
+    workersTableBody.innerHTML =
+      "<tr><td colspan='10'>No results found.</td></tr>";
+  }
 }
 
 getWorkers();
@@ -119,8 +136,9 @@ function deleteWorker(i) {
 }
 
 function editWorker(i) {
+  selected = i;
+  modalSubmitBtn.innerHTML = "<i class='bx bxs-save'></i>";
   let worker = workers[i];
-
   workersForm.firstName.value = worker.firstName;
   workersForm.lastName.value = worker.lastName;
   workersForm.address.value = worker.address;
@@ -130,3 +148,36 @@ function editWorker(i) {
   workersForm.salary.value = worker.salary;
   workersForm.isMarried.checked = worker.isMarried;
 }
+
+openModalBtn.addEventListener("click", () => {
+  selected = null;
+  modalSubmitBtn.innerHTML = "<i class='bx bx-plus'></i>";
+  let {
+    firstName,
+    lastName,
+    address,
+    birthday,
+    position,
+    level,
+    salary,
+    isMarried,
+  } = workersForm.elements;
+  firstName.value = "";
+  lastName.value = "";
+  address.value = "";
+  birthday.value = "";
+  position.value = "";
+  level.value = level[0];
+  salary.value = "";
+  isMarried.checked = false;
+});
+
+workerSearchInput.addEventListener("keyup", function () {
+  search = this.value.trim().toLowerCase();
+  getWorkers();
+});
+
+filterSelect.addEventListener("change", function () {
+  level = this.value;
+  getWorkers();
+});
